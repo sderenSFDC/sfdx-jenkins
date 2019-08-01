@@ -49,6 +49,21 @@ node {
             //     error 'permset:assign failed'
             // }
         }
+
+
+        stage('Run Apex Test') {
+            sh "mkdir -p ${RUN_ARTIFACT_DIR}"
+            timeout(time: 120, unit: 'SECONDS') {
+                rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
+                if (rc != 0) {
+                    error 'apex test run failed'
+                }
+            }
+        }
+
+        stage('Collect Test Results') {
+            junit keepLongStdio: true, testResults: 'tests/**/*-junit.xml'
+        }
         
         stage('Delete Scratch Org') {
 
@@ -64,19 +79,5 @@ node {
             echo lims
         }
         
-
-        // stage('Run Apex Test') {
-        //     sh "mkdir -p ${RUN_ARTIFACT_DIR}"
-        //     timeout(time: 120, unit: 'SECONDS') {
-        //         rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
-        //         if (rc != 0) {
-        //             error 'apex test run failed'
-        //         }
-        //     }
-        // }
-
-        // stage('collect results') {
-        //     junit keepLongStdio: true, testResults: 'tests/**/*-junit.xml'
-        // }
     }
 }

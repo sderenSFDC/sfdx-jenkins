@@ -1,6 +1,6 @@
-# Jenkins + SFDX
+# Using SFDX with Jenkins
 
-The steps in this readme roughly follow the [Salesforce DX Developer guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm) and try to fill in gaps in order to get an end-to-end process in place for setting up CI on a new project. 
+The steps in this readme roughly follow the [Salesforce DX Developer guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm) and attempt to fill in the gaps in order to set up CI on a new project. 
 
 The sfdx project contains trivial metadata for the purpose of showing deployment examples using Jenkins and sfdx.
 

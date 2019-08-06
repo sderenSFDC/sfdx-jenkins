@@ -79,11 +79,11 @@ Set the **Script Path** to one of the Jenkinsfile filenames in this repo, here t
 
 The Jenkinsfile can be dropped directly into the Jenkins job in the Jenkins UI OR it can be checked out of a repo each time the job runs.  Here I've opted to commit the Jenkinsfile(s) to the repo and have Jenkins grab the latest version as a first step. This has the benefit of keeping the job configuration very simple and prevents Jenkins from "owning" your CI scripts.
 
-## Jenkinsfile(s) Examples
+## Jenkinsfile Examples
 
-There are multiple Jenkinsfiles included in this repo to showcase some of the different types of deployments made possible with sfdx. At a high-level, a Jenkinsfile contains a script that is executed to perform build automation tasks. In a Salesforce deployment context, this might include actions such as checking out your project from source control, creating a scratch org, deploying metadata, running unit tests, etc.
+At a high-level, a Jenkinsfile contains a script that is executed to perform build automation tasks. In a Salesforce deployment context, this might include actions such as checking out your project from source control, creating a scratch org, deploying metadata, running unit tests, etc.
 
-There are two main examples in this repo, unpackaged and packaged deployments (Unlocked/2nd Generation Packaging):
+There are multiple Jenkinsfiles included in this repo to show examples of basic packaged and unpackaged deployments:
 
 **Jenkinsfile_unpackaged**
 
@@ -114,4 +114,5 @@ This script performs the following steps:
 
 ### Resources
 
-- https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm
+- [SFDX and CI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm) is an indepth walkthrough on setting up dx with jenkins
+- [Jenkins Pipeline Syntax Generator](https://jenkins.io/doc/book/pipeline/getting-started/#snippet-generator) is a great tool to help you auto generate commands like the git checkout command that tend have many parameters.

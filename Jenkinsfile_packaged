@@ -58,17 +58,15 @@ node {
             if (rc != 0) {
                 error 'package install failed'
             }
-            sleep 120
         }
 
         stage('Run Apex Tests') {
+            sleep 30 // needed to make sure tests appear in org before we try to call force:apex:test:run
             sh "mkdir -p ${RUN_ARTIFACT_DIR}"
-            // timeout(time: 120, unit: 'SECONDS') {
-                rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run -w 10 --testlevel RunAllTestsInOrg --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
-                if (rc != 0) {
-                    error 'apex test run failed'
-                }
-            // }
+            rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run -w 10 --testlevel RunAllTestsInOrg --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
+            if (rc != 0) {
+                error 'apex test run failed'
+            }
         }
 
         stage('Collect Test Results') {

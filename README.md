@@ -6,7 +6,7 @@ The sfdx project contains trivial metadata for the purpose of showing deployment
 
 _You likely will not need the steps related to hosting Jenkins but they are included here for completeness._
 
-#### 1. Salesforce DevHub Org Setup
+## 1. Salesforce DevHub Org Setup
 
 Jenkins will be using JWT to authenticate into the DevHub so there are a few initial tasks to do in the org.
 
@@ -15,7 +15,7 @@ Jenkins will be using JWT to authenticate into the DevHub so there are a few ini
 
 2. Create an integration user in the DevHub. This will be the user Jenkins uses to perform build tasks. Make sure that the user has a profile that can access the connected app.
 
-#### 2. Getting a Jenkins Server Running (w/Digital Ocean)
+## 2. Getting a Jenkins Server Running (w/Digital Ocean)
 
 _Skip this section if you already have a Jenkins server._
 
@@ -27,20 +27,21 @@ Notes from setup (this should only take a few minutes):
 2. Create a droplet for Jenkins Distribution through the marketplace. Go to https://marketplace.digitalocean.com/apps/onjection-jenkins and select "Create Onjection Jenkins Droplet".
 3. After the droplet is created, open the console for the next few steps (use the web-based console or SSH using the IP on the droplet page `ssh root@DROPLET_IP`)
     - In the console, you should see prompts to reset the default root password, and the jenkins user password.
-    - Start the jenkins process using 
+    - Start the jenkins process using  
     `systemctl start jenkins`
-    - Next, run these commands to install [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) on the jenkins server:
-        `wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz`
-        `mkdir sfdx`
-        `tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1`
-        `./sfdx/install`
+    - Next, run these commands to install [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) on the jenkins server:  
+        `wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz`  
+        `mkdir sfdx`  
+        `tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1`  
+        `./sfdx/install`  
     - Jenkins needs to checkout code from this repo, so create a Github user for Jenkins and setup an [SSH key](https://help.github.com/en/enterprise/2.15/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) in the console:
+        
         Run `ssh-keygen -t rsa -b 4096 -C "jenkins-user-email@example.com"` to generate the key
-        (leave file name empty and don't set a password when prompted)
-        Run `cat .ssh/id_rsa.pub` to see the new key and add it to the Jenkins github user's SSH keys
+        (leave file name empty and don't set a password when prompted)  
+        Run `cat .ssh/id_rsa.pub` to see the new key and add it to the Jenkins github user's SSH keys  
         Run `cat .ssh/id_rsa` to see the private key and copy/save it for later
 
-#### 3. Configure Jenkins Settings
+## 3. Configure Jenkins Settings
 
 Login to the Jenkin's UI (_which is now running on http://<PUBLIC-IP-OF-DROPLET>:8080 if you were following the previous steps_).
 
@@ -65,7 +66,7 @@ The config should look like this:
 
 _The screenshot shows how you can ensure that the sfdx dependency is installed every time the job is run using the **Install Automatically** checkbox. If you don't install automatically you can reference the sfdx tool if you already installed in one of the previous steps._
 
-#### 4. Create a Jenkins Job
+## 4. Create a Jenkins Job
 
 After bringing Jenkins online, the next step is to create a job that calls DX to perform our build tasks.
 
@@ -79,7 +80,7 @@ Set the **Script Path** to one of the Jenkinsfile filenames in this repo, here t
 
 The Jenkinsfile can be dropped directly into the Jenkins job in the Jenkins UI OR it can be checked out of a repo each time the job runs.  Here I've opted to commit the Jenkinsfile(s) to the repo and have Jenkins grab the latest version as a first step. This has the benefit of keeping the job configuration very simple and prevents Jenkins from "owning" your CI scripts.
 
-#### Jenkinsfile(s) Examples
+## Jenkinsfile(s) Examples
 
 There are multiple Jenkinsfiles included in this repo to showcase some of the different types of deployments made possible with sfdx. At a high-level, a Jenkinsfile contains a script that is executed to perform build automation tasks. In a Salesforce deployment context, this might include actions such as checking out your project from source control, creating a scratch org, deploying metadata, running unit tests, etc.
 
@@ -105,13 +106,12 @@ This script performs the following steps:
 - Cleans the workspace to start from a clean slate
 - Performs Git checkout of this repo
 - Logs into the DevHub using JWT authentication
+- Creates a Package Version
 - Creates a Scratch Org
-- Pushes all metadata from force-app to the Scratch Org
+- Installs the Package into the Scratch Org
 - Runs Apex tests
 - Deletes the Scratch Org
 - Logs current scratch org limits to the console
-
-
 
 ### Resources
 

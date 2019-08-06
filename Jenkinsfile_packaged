@@ -30,10 +30,9 @@ node {
             if (rc != 0) { error 'hub org authorization failed' }
         }
 
-        // this assumes a package has been created once sfdx force:package:create -n Demo -d "Demo package" -r force-app -t Unlocked -v cihub
+        // this assumes a package has been created once 
+        //      example:        $sfdx force:package:create -n Demo -d "Demo package" -r force-app -t Unlocked -v cihub
         stage('Create Package Version') {
-
-            // need to pull out assigned username
             rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:package:version:create -p Demo -d force-app -k test1234 --wait 60 -v ${HUB_ORG} --json"
             echo rmsg
             def jsonSlurper = new JsonSlurperClassic()
@@ -59,41 +58,37 @@ node {
             if (rc != 0) {
                 error 'package install failed'
             }
-            // assign permset
-            // rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:user:permset:assign --targetusername ${SFDC_USERNAME} --permsetname DreamHouse"
-            // if (rc != 0) {
-            //     error 'permset:assign failed'
-            // }
         }
 
 
-        stage('Run Apex Tests') {
-            sh "mkdir -p ${RUN_ARTIFACT_DIR}"
-            timeout(time: 120, unit: 'SECONDS') {
-                rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
-                if (rc != 0) {
-                    error 'apex test run failed'
-                }
-            }
-        }
 
-        stage('Collect Test Results') {
-            junit keepLongStdio: true, testResults: 'tests/**/*-junit.xml'
-        }
+        // stage('Run Apex Tests') {
+        //     sh "mkdir -p ${RUN_ARTIFACT_DIR}"
+        //     timeout(time: 120, unit: 'SECONDS') {
+        //         rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
+        //         if (rc != 0) {
+        //             error 'apex test run failed'
+        //         }
+        //     }
+        // }
+
+        // stage('Collect Test Results') {
+        //     junit keepLongStdio: true, testResults: 'tests/**/*-junit.xml'
+        // }
         
-        stage('Delete Scratch Org') {
+        // stage('Delete Scratch Org') {
 
-            rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:org:delete -u ${SFDC_USERNAME} -p"
-            if (rc != 0) {
-                error 'delete failed'
-            }
-        }
+        //     rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:org:delete -u ${SFDC_USERNAME} -p"
+        //     if (rc != 0) {
+        //         error 'delete failed'
+        //     }
+        // }
 
-        stage('Show Scratch Limits') {
+        // stage('Show Scratch Limits') {
 
-            lims = sh returnStdout: true, script: "${toolbelt}/sfdx force:limits:api:display -u ${HUB_ORG} | grep 'Scratch*'"
-            echo lims
-        }
+        //     lims = sh returnStdout: true, script: "${toolbelt}/sfdx force:limits:api:display -u ${HUB_ORG} | grep 'Scratch*'"
+        //     echo lims
+        // }
         
     }
 }

@@ -58,6 +58,7 @@ node {
             if (rc != 0) {
                 error 'package install failed'
             }
+            sleep 120
         }
 
         stage('Run Apex Tests') {

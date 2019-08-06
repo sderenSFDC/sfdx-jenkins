@@ -1,0 +1,99 @@
+#!groovy
+import groovy.json.JsonSlurperClassic
+node {
+    def BUILD_NUMBER=env.BUILD_NUMBER
+    def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
+    def SFDC_USERNAME
+    def PACKAGE_ID
+    
+    def HUB_ORG=env.HUB_ORG_DH
+    def SFDC_HOST = env.SFDC_HOST_DH
+    def JWT_KEY_CRED_ID = env.JWT_CRED_ID_DH
+    def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
+    
+    def toolbelt = tool 'toolbelt'
+    stage('checkout') {
+        cleanWs()
+        checkout([$class: 'GitSCM', 
+            branches: [[name: '*/master']], 
+            doGenerateSubmoduleConfigurations: false, 
+            extensions: [], 
+            submoduleCfg: [], 
+            userRemoteConfigs: [[credentialsId: 'e809da65-27de-48ee-90b0-9b1a99aeb10d', 
+            url: 'git@github.com:spderen/sfdx-jenkins.git']]])
+    }
+            
+    withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
+
+        stage('Authenticate With Hub') {
+            rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
+            if (rc != 0) { error 'hub org authorization failed' }
+        }
+
+        // this assumes a package has been created once sfdx force:package:create -n Demo -d "Demo package" -r force-app -t Unlocked -v cihub
+        stage('Create Package Version') {
+
+            // need to pull out assigned username
+            rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:package:version:create -p Demo -d force-app -k test1234 --wait 60 -v ${HUB_ORG} --json"
+            echo rmsg
+            def jsonSlurper = new JsonSlurperClassic()
+            def robj = jsonSlurper.parseText(rmsg)
+            if (robj.status != 0) { error 'package version creation failed: ' + robj.message }
+            PACKAGE_ID=robj.result.SubscriberPackageVersionId
+            robj = null
+        }
+
+        stage('Create Scratch Org') {
+            // need to pull out assigned username
+            rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:org:create --durationdays 1 --definitionfile config/project-scratch-def.json --json --setdefaultusername"
+            echo rmsg
+            def jsonSlurper = new JsonSlurperClassic()
+            def robj = jsonSlurper.parseText(rmsg)
+            if (robj.status != 0) { error 'org creation failed: ' + robj.message }
+            SFDC_USERNAME=robj.result.username
+            robj = null
+        }
+
+        stage('Install Package In Scratch Org') {
+            rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:package:install -u ${SFDC_USERNAME} -k test1234 --publishwait 10 --package ${PACKAGE_ID}"
+            if (rc != 0) {
+                error 'package install failed'
+            }
+            // assign permset
+            // rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:user:permset:assign --targetusername ${SFDC_USERNAME} --permsetname DreamHouse"
+            // if (rc != 0) {
+            //     error 'permset:assign failed'
+            // }
+        }
+
+
+        stage('Run Apex Tests') {
+            sh "mkdir -p ${RUN_ARTIFACT_DIR}"
+            timeout(time: 120, unit: 'SECONDS') {
+                rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
+                if (rc != 0) {
+                    error 'apex test run failed'
+                }
+            }
+        }
+
+        stage('Collect Test Results') {
+            junit keepLongStdio: true, testResults: 'tests/**/*-junit.xml'
+        }
+        
+        stage('Delete Scratch Org') {
+
+            rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:org:delete -u ${SFDC_USERNAME} -p"
+            if (rc != 0) {
+                error 'delete failed'
+            }
+        }
+
+        stage('Show Scratch Limits') {
+
+            lims = sh returnStdout: true, script: "${toolbelt}/sfdx force:limits:api:display -u ${HUB_ORG} | grep 'Scratch*'"
+            echo lims
+        }
+        
+    }
+}

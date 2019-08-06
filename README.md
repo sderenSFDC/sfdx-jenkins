@@ -29,8 +29,8 @@ Notes from setup (this should only take a few minutes):
     - In the console, you should see prompts to reset the default root password, and the jenkins user password.
     - Start the jenkins process using  
     `systemctl start jenkins`
-    - Next, run these commands to install [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) on the jenkins server:  
-        `wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz`  
+    - Next, run these commands to install [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) on the jenkins server:<br/>
+        `wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz`<br/>
         `mkdir sfdx`  
         `tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1`  
         `./sfdx/install`  

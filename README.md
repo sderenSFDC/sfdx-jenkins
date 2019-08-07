@@ -85,31 +85,31 @@ At a high-level, a Jenkinsfile contains a script that is executed to perform bui
 
 There are multiple Jenkinsfiles included in this repo to show examples of basic packaged and unpackaged deployments:
 
-**Jenkinsfile_unpackaged**
+**Deploying Unpackaged Metadata**
 
-This script performs the following steps:
+The _Jenkinsfile_unpackaged_ script performs the following steps:
 - Ensures that the sfdx tool is avaialble
 - Cleans the workspace to start from a clean slate
-- Performs Git checkout of this repo
+- Performs git checkout of this repo
 - Logs into the DevHub using JWT authentication
-- Creates a Scratch Org
-- Pushes all metadata from force-app to the Scratch Org
+- Creates a scratch org
+- Pushes all metadata from force-app to the scratch Org
 - Runs Apex tests
-- Deletes the Scratch Org
+- Deletes the scratch org
 - Logs current scratch org limits to the console
 
-**Jenkinsfile_packaged**
+**Deploying an Unlocked Package**
 
-This script performs the following steps:
+The _Jenkinsfile_packaged_ script performs the following steps:
 - Ensures that the sfdx tool is avaialble
 - Cleans the workspace to start from a clean slate
-- Performs Git checkout of this repo
+- Performs git checkout of this repo
 - Logs into the DevHub using JWT authentication
-- Creates a Package Version
-- Creates a Scratch Org
-- Installs the Package into the Scratch Org
+- Creates a new version of an existing package
+- Creates a scratch org
+- Installs the package into the scratch org
 - Runs Apex tests
-- Deletes the Scratch Org
+- Deletes the scratch org
 - Logs current scratch org limits to the console
 
 ### Resources

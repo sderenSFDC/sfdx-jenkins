@@ -19,13 +19,12 @@ Jenkins will be using JWT to authenticate into the DevHub so there are a few ini
 
 _Skip this section if you already have a Jenkins server._
 
-This section contains notes related to setting up a Jenkins using Digital Ocean (DO) as the hosting provider.  Note that many other hosting options exist (eg AWS, Bitnami, Cloudbees), but DO provided a fast path to getting Jenkins online (cost: 1 month free trial, then $5/month on lowest tier).
+This section contains notes related to setting up a Jenkins using Digital Ocean as the hosting provider.  Many hosting options exist (eg AWS, Bitnami, Cloudbees) but Digital Ocean provided a very fast path to getting Jenkins online with their marketplace options.
 
 Notes from setup (this should only take a few minutes):
 
-1. Create a DO account if you don't have one already
-2. Create a droplet for Jenkins Distribution through the marketplace. Go to https://marketplace.digitalocean.com/apps/onjection-jenkins and select "Create Onjection Jenkins Droplet".
-3. After the droplet is created, open the console for the next few steps (use the web-based console or SSH using the IP on the droplet page `ssh root@DROPLET_IP`)
+1. Create a droplet for Jenkins Distribution through the marketplace. Go to https://marketplace.digitalocean.com/apps/onjection-jenkins and select "Create Onjection Jenkins Droplet".
+2. After the droplet is created, open the web-based console or SSH using the IP on the droplet page `ssh root@DROPLET_IP`
     - In the console, you should see prompts to reset the default root password, and the jenkins user password.
     - Start the jenkins process using  
     `systemctl start jenkins`  
@@ -34,11 +33,10 @@ Notes from setup (this should only take a few minutes):
         `mkdir sfdx`  
         `tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1`  
         `./sfdx/install`  
-    - Jenkins needs to checkout code from this repo, so create a Github user for Jenkins and setup an [SSH key](https://help.github.com/en/enterprise/2.15/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) in the console:<br/>
-        Run `ssh-keygen -t rsa -b 4096 -C "jenkins-user-email@example.com"` to generate the key
-        (leave file name empty and don't set a password when prompted)  
+    - Jenkins needs to checkout code from _this_ repo, so create a Github user for Jenkins and setup an [SSH key](https://help.github.com/en/enterprise/2.15/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) in the console:<br/>
+        Run `ssh-keygen -t rsa -b 4096 -C "jenkins-user-email@example.com"` to generate the key (leave file name empty and don't set a password when prompted)  
         Run `cat .ssh/id_rsa.pub` to see the new key and add it to the Jenkins github user's SSH keys  
-        Run `cat .ssh/id_rsa` to see the private key and copy/save it for later  
+        Run `cat .ssh/id_rsa` to see the private key and copy/save it for a later Jenkins step  
 
 ## 3. Configure Jenkins Settings
 

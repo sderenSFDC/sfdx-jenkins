@@ -67,7 +67,11 @@ _The screenshot shows how you can ensure that the sfdx dependency is installed e
 
 ## 4. Create a Jenkins Job
 
-After bringing Jenkins online, the next step is to create a job that calls DX to perform our build tasks.
+After bringing Jenkins online, the next step is to create a job that calls sfdx to perform our build tasks. The Jenkins UI portion of the job configuration is very simple: it locates and executes a Jenkinsfile. A Jenkinsfile contains a script that is executed to perform build automation tasks. In a Salesforce deployment context, this might include actions such as checking out your project from source control, creating a scratch org, deploying metadata, running unit tests, etc.
+
+The Jenkinsfile can be copy/pasted directly into the Jenkins job (in the Jenkins UI) OR it can be checked out of a repo each time the job runs.  Here I've opted to commit the Jenkinsfile(s) to the repo and have Jenkins grab the latest version as a first step. This is a best practice and prevents Jenkins from "owning" your CI scripts.
+
+**Job Setup**
 
 Create a new Jenkins Item and select `Pipeline` as the base project. Select Configure in the new job, then scroll down to the Pipeline section. 
 
@@ -77,11 +81,7 @@ Select `Pipeline script from SCM` and use your repository URL and select the cre
 
 Set the **Script Path** to one of the Jenkinsfile filenames in this repo, here the job is pointed at `Jenkinsfile_unpackaged`.
 
-The Jenkinsfile can be dropped directly into the Jenkins job in the Jenkins UI OR it can be checked out of a repo each time the job runs.  Here I've opted to commit the Jenkinsfile(s) to the repo and have Jenkins grab the latest version as a first step. This has the benefit of keeping the job configuration very simple and prevents Jenkins from "owning" your CI scripts.
-
 ## Jenkinsfile Examples
-
-At a high-level, a Jenkinsfile contains a script that is executed to perform build automation tasks. In a Salesforce deployment context, this might include actions such as checking out your project from source control, creating a scratch org, deploying metadata, running unit tests, etc.
 
 There are multiple Jenkinsfiles included in this repo to show examples of basic packaged and unpackaged deployments:
 
@@ -116,3 +116,4 @@ The _Jenkinsfile_packaged_ script performs the following steps:
 
 - [SFDX and CI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm) is an indepth walkthrough on setting up dx with jenkins
 - [Jenkins Pipeline Syntax Generator](https://jenkins.io/doc/book/pipeline/getting-started/#snippet-generator) is a great tool to help you auto generate commands like the git checkout command that tend have many parameters.
+- This [forcedotcom repo](https://github.com/forcedotcom/sfdx-jenkins-org) has example of using force:mdapi:deploy calls instead of using scratch orgs

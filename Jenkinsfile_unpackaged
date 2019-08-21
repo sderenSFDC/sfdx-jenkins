@@ -30,6 +30,7 @@ node {
         }
         
         stage('Create Scratch Org') {
+            sleep 10
             // need to pull out assigned username
             rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:org:create --durationdays 1 --definitionfile config/project-scratch-def.json --json --setdefaultusername -v ${HUB_ORG}"
             echo rmsg
@@ -41,6 +42,7 @@ node {
         }
 
         stage('Push To Scratch Org') {
+            sleep 10
             rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:source:push --targetusername ${SFDC_USERNAME}"
             if (rc != 0) {
                 error 'push failed'
@@ -54,6 +56,7 @@ node {
 
 
         stage('Run Apex Tests') {
+            sleep 10
             sh "mkdir -p ${RUN_ARTIFACT_DIR}"
             rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run -w 10 --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${SFDC_USERNAME}"
             if (rc != 0) {
@@ -62,11 +65,12 @@ node {
         }
 
         stage('Collect Test Results') {
+            sleep 10
             junit keepLongStdio: true, testResults: 'tests/**/*-junit.xml'
         }
         
         stage('Delete Scratch Org') {
-
+            sleep 10
             rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:org:delete -u ${SFDC_USERNAME} -p"
             if (rc != 0) {
                 error 'delete failed'
@@ -74,7 +78,7 @@ node {
         }
 
         stage('Show Scratch Limits') {
-
+            sleep 10
             lims = sh returnStdout: true, script: "${toolbelt}/sfdx force:limits:api:display -u ${HUB_ORG} | grep 'Scratch*'"
             echo lims
         }

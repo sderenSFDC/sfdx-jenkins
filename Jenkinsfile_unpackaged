@@ -31,7 +31,7 @@ node {
         
         stage('Create Scratch Org') {
             // need to pull out assigned username
-            rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:org:create --durationdays 1 --definitionfile config/project-scratch-def.json --json --setdefaultusername"
+            rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:org:create --durationdays 1 --definitionfile config/project-scratch-def.json --json --setdefaultusername -v ${HUB_ORG}"
             echo rmsg
             def jsonSlurper = new JsonSlurperClassic()
             def robj = jsonSlurper.parseText(rmsg)

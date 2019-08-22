@@ -1,3 +1,5 @@
+# command block for 'install automatically' checked
+
 whoami
 
 wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
@@ -8,4 +10,7 @@ tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
 
 sudo ./sfdx/install
 
-sfdx update
+sudo sfdx update
+
+
+# toolhome = sfdx/bin

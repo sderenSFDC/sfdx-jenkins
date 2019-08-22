@@ -112,6 +112,6 @@ The _Jenkinsfile_packaged_ script performs the following steps:
 
 ### Resources
 
-- [SFDX and CI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm) is an indepth walkthrough on setting up dx with jenkins
+- [SFDX and CI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ci_jenkins_config_env.htm) is an in-depth walkthrough on setting up dx with jenkins
 - [Jenkins Pipeline Syntax Generator](https://jenkins.io/doc/book/pipeline/getting-started/#snippet-generator) is a great tool to help you auto generate commands like the git checkout command that tend have many parameters.
 - This [forcedotcom repo](https://github.com/forcedotcom/sfdx-jenkins-org) has an example of using force:mdapi:deploy calls instead of using scratch orgs
